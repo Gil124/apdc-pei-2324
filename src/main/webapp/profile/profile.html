@@ -12,7 +12,8 @@
                 Welcome <span id="username"></span>!
             </h1>
 
-            <div>
+            <h2>Change Account Password</h2>
+            <div class="password_container">
                 <div>
                     <p>Old Password</p>
                     <input type="password" id="password">
@@ -26,9 +27,84 @@
                     <input type="password" id="confirm_new_password">
                 </div>
                 <button id="changePassword_button" class="mini_button" >Confirm</button>
-                <button id="logout_button" class="button" >Log Out</button>
+
             </div>
 
+                <h2>Change a User Role</h2>
+
+            <div class="password_container">
+                <div>
+                    <p>User to Change</p>
+                    <input type="text" id="user_to_change_role">
+
+                </div>
+                <div>
+                <p>Role to Change</p>
+                <select id="role_to_change">
+                    <option value="USER">User</option>
+                    <option value="GBO">Gestão Back Office</option>
+                    <option value="GA">Gestão  de Aplicação</option>
+                    <option value="SU">Super User</option>
+                </select>
+
+            </div>
+                <button id="changeRole_button" class="mini_button" >Confirm</button>
+            </div>
+            <h2>Change a User State</h2>
+
+            <div class="password_container">
+                <div>
+                    <p>User to Change</p>
+                    <input type="text" id="user_to_change_state">
+
+                </div>
+                <div>
+                    <p>State to Change</p>
+                    <select id="state_to_change">
+                        <option value=true>Activate</option>
+                        <option value=false>Deactivated</option>
+                    </select>
+
+                </div>
+                <button id="changeState_button" class="mini_button" >Confirm</button>
+            </div>
+            <h2>Remove a User</h2>
+
+            <div class="password_container">
+                <div>
+                    <p>User to Remove</p>
+                    <input type="text" id="user_to_remove">
+
+                </div>
+
+                <button id="remove_button" class="mini_button" >Remove</button>
+            </div>
+            <h2>Change Account Attributes</h2>
+            <div class="password_container">
+                <div>
+                    <p>User to Change</p>
+                    <input type="tel" id="user_to_change">
+                </div>
+                <div>
+                    <p>New email</p>
+                    <input type="text" id="new_email">
+                </div>
+                <div>
+                    <p>New Name</p>
+                    <input type="text" id="new_name">
+                </div>
+                <div>
+                    <p>New Phone</p>
+                    <input type="tel" id="new_phone">
+                </div>
+                <button id="changeAttributes_button" class="mini_button" >Confirm</button>
+
+            </div>
+            <button id="list_button" class="button" >List Users</button>
+            <div class="list_container" id="list_container"></div>
+            <button id="token_button" class="button" >Show Token</button>
+            <div class="list_container" id="token_container"></div>
+            <button id="logout_button" class="button" >Log Out</button>
         </div>
         <div class="img_container"></div>
     </div>
@@ -42,9 +118,26 @@
     const password = document.getElementById("password");
     const newPassword = document.getElementById("new_password");
     const confirmNewPassword = document.getElementById("confirm_new_password");
+    const changePasswordButton = document.getElementById("changePassword_button");
+
+    const userToChangeRole = document.getElementById("user_to_change_role")
+    const roleToChange = document.getElementById("role_to_change")
+
+    const userToChangeState = document.getElementById("user_to_change_state")
+    const stateToChange = document.getElementById("state_to_change")
+
+    const userToRemove = document.getElementById("user_to_remove")
+
+    const userToChangeAttrib = document.getElementById("user_to_change")
+    const newEmail = document.getElementById("new_email")
+    const newName = document.getElementById("new_name")
+    const newPhone = document.getElementById("new_phone")
+
+    const listContainer =document.getElementById("list_container")
+
+    const tokenContainer = document.getElementById("token_container")
 
     const logoutButton = document.getElementById("logout_button");
-    const changePasswordButton = document.getElementById("changePassword_button");
 
     logoutButton.addEventListener("click", e => {
         e.preventDefault();
@@ -75,9 +168,12 @@
 
         } else {
 
-            const body = {
+            const header = {
+                'Content-type': 'application/json;',
                 "username": JSON.parse(localStorage.getItem("username")),
                 "tokenId": JSON.parse(localStorage.getItem("tokenId")),
+            }
+            const body = {
                 "password": password.value,
                 "newPassword": newPassword.value
             }
@@ -85,7 +181,7 @@
             fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile", {
 
                 method: "PUT",
-                headers: {'Content-type': 'application/json;'},
+                headers: header,
                 body: JSON.stringify(body)
 
             }).then(async response => {
@@ -97,8 +193,7 @@
                     password.value = ""
                     newPassword.value = "";
                     confirmNewPassword.value = "";
-                }
-                else {
+                } else {
                     alert("Password Changed Successfully!")
                     password.value = ""
                     newPassword.value = "";
@@ -107,8 +202,193 @@
             })
         }
     })
+        document.getElementById("changeRole_button").addEventListener("click", ev => {
+            ev.preventDefault();
+            if (userToChangeRole.value === "" || roleToChange.value === "") {
+                alert("Fields empty try again")
+            }
+            else {
+                const header = {
+                    'Content-type': 'application/json;',
+                    "username": JSON.parse(localStorage.getItem("username")),
+                    "userToChange": userToChangeRole.value,
+                    "tokenId": JSON.parse(localStorage.getItem("tokenId")),
+                }
 
+                const body = {
+                    "role": roleToChange.value
+                }
+                fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile/role", {
+                    method: "PUT",
+                    headers: header,
+                    body: JSON.stringify(body)
+                }).then(async response => {
 
+                    const result = await response;
+
+                    if (!result.ok) {
+                        alert("Error occurred when changing roles!");
+                        roleToChange.value = ""
+                        userToChangeRole.value = "";
+                    } else {
+                        alert("Role Changed Successfully!")
+                        roleToChange.value = ""
+                        userToChangeRole.value = "";
+                    }
+                })
+            }
+        })
+    document.getElementById("changeState_button").addEventListener("click", ev => {
+        ev.preventDefault();
+        if (userToChangeState.value === "" || stateToChange.value === "") {
+            alert("Fields empty try again")
+        }
+        else {
+            const header = {
+                'Content-type': 'application/json;',
+                "username": JSON.parse(localStorage.getItem("username")),
+                "userToChange": userToChangeState.value,
+                "tokenId": JSON.parse(localStorage.getItem("tokenId")),
+            }
+
+            const body = {
+                "state": stateToChange.value
+            }
+            fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile/state", {
+                method: "PUT",
+                headers: header,
+                body: JSON.stringify(body)
+            }).then(async response => {
+
+                const result = await response;
+
+                if (!result.ok) {
+                    alert("Error occurred when changing states!");
+                    stateToChange.value = ""
+                    userToChangeState.value = "";
+                } else {
+                    alert("State Changed Successfully!")
+                    stateToChange.value = ""
+                    userToChangeState.value = "";
+                }
+            })
+        }
+    })
+
+    document.getElementById("remove_button").addEventListener("click", ev => {
+        ev.preventDefault();
+        if (userToRemove.value === "") {
+            alert("Fields empty try again")
+        }
+        else {
+            const header = {
+                'Content-type': 'application/json;',
+                "username": JSON.parse(localStorage.getItem("username")),
+                "userToRemove": userToRemove.value,
+                "tokenId": JSON.parse(localStorage.getItem("tokenId")),
+            }
+
+            fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile/remove", {
+                method: "DELETE",
+                headers: header
+            }).then(async response => {
+
+                const result = await response;
+
+                if (!result.ok) {
+                    alert("Error occurred when removing user!");
+                    userToRemove.value = ""
+                } else {
+                    alert("Removed User Successfully!")
+                    userToRemove.value = ""
+                }
+            })
+        }
+    })
+
+    document.getElementById("list_button").addEventListener("click", ev => {
+        ev.preventDefault()
+
+        const header = {
+            'Content-type': 'application/json;',
+            "username": JSON.parse(localStorage.getItem("username")),
+            "tokenId": JSON.parse(localStorage.getItem("tokenId")),
+        }
+
+        fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile/list", {
+            method: "GET",
+            headers: header
+        }).then(async response => response.json()).then(data => {
+            for(const user of data) {
+                const userElement = document.createElement("div");
+                userElement.textContent = `Username: ${user.username} | Email: ${user.email} | Name: ${user.name}`;
+                listContainer.appendChild(userElement);
+            }
+        })
+    })
+
+    document.getElementById("token_button").addEventListener("click", ev => {
+        ev.preventDefault();
+
+        const header = {
+            'Content-type': 'application/json;',
+            "username": JSON.parse(localStorage.getItem("username")),
+            "tokenId": JSON.parse(localStorage.getItem("tokenId")),
+        }
+
+        fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile/", {
+            method: "GET",
+            headers: header
+        }).then(async response => response.json()).then(data => {
+            for(const user of data) {
+                const userElement = document.createElement("div");
+                userElement.textContent = `Username: ${user.username} | Email: ${user.email} | Name: ${user.name}`;
+                tokenContainer.textContent = data;
+            }
+        })
+    })
+
+    document.getElementById("changeAttributes_button").addEventListener("click", ev => {
+        ev.preventDefault();
+
+        if (userToChangeAttrib.value==="") {alert("User not specified!")}
+        else if(newEmail.value==="" && newPhone.value==="" && newName.value==="") {alert("No fields filled!")}
+        else {
+            const header = {
+                'Content-type': 'application/json;',
+                "username": JSON.parse(localStorage.getItem("username")),
+                "tokenId": JSON.parse(localStorage.getItem("tokenId")),
+                "userToChange": userToChangeAttrib.value,
+            }
+
+            const body = {
+                "name": newName.value,
+                "email": newEmail.value,
+                "phoneNumber": newPhone.value
+            }
+
+            fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile/attributes", {
+                method: "PUT",
+                headers: header,
+                body: JSON.stringify(body)
+            }).then(async response => {
+
+                const result = await response;
+
+                if (!result.ok) {
+                    alert("Error occurred when changing attributes!");
+                   newName.value = "";
+                     newEmail.value = ""
+                        newPhone.value = ""
+                } else {
+                    alert("Attributes Changed Successfully!")
+                    newName.value = "";
+                    newEmail.value = ""
+                    newPhone.value = ""
+                }
+            })
+        }
+    })
 
 </script>
 </html>

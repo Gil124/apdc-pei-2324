@@ -107,7 +107,6 @@ public class ProfileResource {
 
         String userRole = user.getString("role");
         String userToChangeRole = userToChangeData.getString("role");
-
         if (userRole.equals("USER")) { return Response.status((Response.Status.FORBIDDEN)).entity("user " + username + " does not have permissions for this function").build(); }
         if (userRole.equals("GBO") && !userToChangeRole.equals("USER")) { return Response.status((Response.Status.FORBIDDEN)).entity("user " + username + " does not have permissions to change users of this role: " + userToChangeRole).build(); }
         if (userRole.equals("GA") && (userToChangeRole.equals("GA") || userToChangeRole.equals("SU"))) { return Response.status((Response.Status.FORBIDDEN)).entity("user " + username + " does not have permissions to change users of this role: " + userToChangeRole).build();}
@@ -351,7 +350,7 @@ public class ProfileResource {
             return Response.status((Response.Status.FORBIDDEN)).entity("expired tokenId: " + tokenKey.getName()).build();
         }
 
-        return Response.ok(g.toJson(key)).build();
+        return Response.ok(g.toJson(tokenKey.getName())).build();
     }
 
 }

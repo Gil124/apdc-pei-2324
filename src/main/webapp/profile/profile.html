@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <title>Profile</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <div class="container">
+        <div class="input_container">
+            <h1 class="title">
+                Welcome <span id="username"></span>!
+            </h1>
+
+            <div>
+                <div>
+                    <p>Old Password</p>
+                    <input type="password" id="password">
+                </div>
+                <div>
+                    <p>New Password</p>
+                    <input type="password" id="new_password">
+                </div>
+                <div>
+                    <p>Confirm Password</p>
+                    <input type="password" id="confirm_new_password">
+                </div>
+                <button id="changePassword_button" class="mini_button" >Confirm</button>
+                <button id="logout_button" class="button" >Log Out</button>
+            </div>
+
+        </div>
+        <div class="img_container"></div>
+    </div>
+</body>
+<script>
+    const usernameText = document.getElementById("username");
+    const currentUser = JSON.parse(localStorage.getItem("username"));
+
+    usernameText.textContent = currentUser;
+
+    const password = document.getElementById("password");
+    const newPassword = document.getElementById("new_password");
+    const confirmNewPassword = document.getElementById("confirm_new_password");
+
+    const logoutButton = document.getElementById("logout_button");
+    const changePasswordButton = document.getElementById("changePassword_button");
+
+    logoutButton.addEventListener("click", e => {
+        e.preventDefault();
+        const body = {
+            "tokenId": JSON.parse(localStorage.getItem("tokenId"))
+        }
+
+        fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile", {
+            method: "DELETE",
+            headers: {'Content-type': 'application/json;'},
+            body: JSON.stringify(body)
+        }).then(async response => {
+            const result = await response;
+            if (!result.ok) {alert("Error occurred when logging out!");}
+            localStorage.removeItem("tokenId");
+            window.location.href = "../index.html";
+        })
+    })
+
+    changePasswordButton.addEventListener("click", e=> {
+        e.preventDefault();
+
+        if (newPassword.value !== confirmNewPassword.value) {
+
+            alert("Passwords don't match!")
+            newPassword.value = "";
+            confirmNewPassword.value = "";
+
+        } else {
+
+            const body = {
+                "username": JSON.parse(localStorage.getItem("username")),
+                "tokenId": JSON.parse(localStorage.getItem("tokenId")),
+                "password": password.value,
+                "newPassword": newPassword.value
+            }
+
+            fetch("https://my-project-2-417209.oa.r.appspot.com/rest/profile", {
+
+                method: "PUT",
+                headers: {'Content-type': 'application/json;'},
+                body: JSON.stringify(body)
+
+            }).then(async response => {
+
+                const result = await response;
+
+                if (!result.ok) {
+                    alert("Error occurred when changing password!");
+                    password.value = ""
+                    newPassword.value = "";
+                    confirmNewPassword.value = "";
+                }
+                else {
+                    alert("Password Changed Successfully!")
+                    password.value = ""
+                    newPassword.value = "";
+                    confirmNewPassword.value = "";
+                }
+            })
+        }
+    })
+
+
+
+</script>
+</html>

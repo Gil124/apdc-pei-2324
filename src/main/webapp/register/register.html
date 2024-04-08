@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+    <div class="container">
+        <form id="form" class="left_container">
+            <h1 class="title">
+                Register
+            </h1>
+            <div class="input_container">
+                <p>
+                    Name: *
+                </p>
+                <input type="text" required id="register_name">
+
+            </div>
+            <div class="input_container">
+                <p>
+                    Username: *
+                </p>
+                <input type="text" required id="register_username">
+
+            </div>
+                <div class="input_container">
+                    <p>
+                        Email: *
+                    </p>
+                    <input type="email" placeholder="example@mail.com" required id="register_email">
+
+                </div>
+            <div class="input_container">
+                <p>
+                    Password: *
+                </p>
+                <input type="password" placeholder="Ex: 123Ex#" required id="register_password">
+
+            </div>
+            <div class="input_container">
+                <p>
+                    Confirm Password: *
+                </p>
+                <input type="password" required id="register_secondPassword">
+
+            </div>
+            <div class="input_container">
+                <p>
+                    Phone Number: *
+                </p>
+                <input type="tel" placeholder="XXX XXX XXX"  pattern="[0-9]{3} [0-9]{3} [0-9]{3}" required id="register_phoneNumber">
+
+            </div>
+            <input type="submit" class="submit_button"/>
+        </form>
+        <div class="img_container"></div>
+    </div>
+</body>
+<script>
+    const form = document.getElementById("form");
+
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const name = document.getElementById("register_name").value;
+        const username = document.getElementById("register_username").value;
+        const email = document.getElementById("register_email").value;
+        const password = document.getElementById("register_password").value;
+        const secondPassword = document.getElementById("register_secondPassword").value;
+        const phoneNumber = document.getElementById("register_phoneNumber").value;
+
+        const body = {
+            "username": username,
+            "email": email,
+            "password": password,
+            "secondPassword": secondPassword,
+            "name": name,
+            "phoneNumber": phoneNumber,
+        }
+
+        fetch("https://my-project-2-417209.oa.r.appspot.com/rest/register", {
+            method: "POST",
+            headers: {'Content-type': 'application/json;'},
+            body: JSON.stringify(body)
+        })
+    });
+</script>
+</html>
